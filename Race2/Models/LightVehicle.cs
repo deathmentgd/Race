@@ -16,7 +16,7 @@ namespace Race2.Models
 		/// </summary>
 		public virtual int PeopleInside { get; set; }
 
-		public LightVehicle(int speed, double puncture, int peopleInside) : base(VehicleType.Light, speed, puncture)
+		public LightVehicle(int speed, double puncture, int peopleInside, int punctureTime) : base(VehicleType.Light, speed, puncture, punctureTime)
 		{
 			PeopleInside = peopleInside;
 		}

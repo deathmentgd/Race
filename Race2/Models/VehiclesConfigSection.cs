@@ -78,5 +78,11 @@ namespace Race2.Models
 		{
 			get { return ((int?)(base["weight"])); }
 		}
+
+		[ConfigurationProperty("punctureTime", DefaultValue ="3", IsRequired = false, IsKey = false)]
+		public int PunctureTime
+		{
+			get { return ((int)(base["punctureTime"])); }
+		}
 	}
 }

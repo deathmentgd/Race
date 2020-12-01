@@ -96,7 +96,7 @@ namespace Race2.Models
 		/// <summary>
 		/// Интервал отслеживания расстояния в мс
 		/// </summary>
-		int _timerInterval = 100;
+		int _timerInterval;
 
 		/// <summary>
 		/// Рандомайзер для уникализации шанса прокола
@@ -122,11 +122,12 @@ namespace Race2.Models
 		/// </summary>
 		/// <param name="speed">скорость</param>
 		/// <param name="puncture">шанс прокола</param>
-		public Vehicle(VehicleType vehicleType, int speed, double puncture)
+		public Vehicle(VehicleType vehicleType, int speed, double puncture, int punctureTime)
 		{
 			IsFinished = true;
 			Speed = speed;
 			Puncture = puncture;
+			_punctureTimeSeconds = punctureTime;
 			VehicleType = vehicleType;
 			IsPuncture = false;
 		}
@@ -137,8 +138,9 @@ namespace Race2.Models
 		/// Стартовать
 		/// </summary>
 		/// <param name="lengthTrack"></param>
-		public void Run(double lengthTrack)
+		public void Run(double lengthTrack, int timerInterval)
 		{
+			_timerInterval = timerInterval;
 			IsFinished = false;
 			DistancePass = 0;
 			ElapsedTime = "00:00:00.000";

@@ -36,8 +36,16 @@ namespace Race2.ViewModels
 
 		public void MainViewLoaded()
 		{
-			//Инициализация
-			Track = new Track(1);
+			TrackParamsConfigSection sectionTrack = (TrackParamsConfigSection)ConfigurationManager.GetSection("TrackParams");
+			if (sectionTrack != null)
+			{
+				Track = new Track(sectionTrack.Length, sectionTrack.TimerInterval);
+			}
+			else
+			{
+				//Инициализация
+				Track = new Track(1, 100);
+			}
 
 			VehiclesConfigSection section = (VehiclesConfigSection)ConfigurationManager.GetSection("Vehicles");
 
@@ -48,13 +56,13 @@ namespace Race2.ViewModels
 					switch (racer.VehicleType)
 					{
 						case VehicleType.Light:
-							Track.Racers.Add(new LightVehicle(racer.Speed, racer.Puncture, (int)racer.People));
+							Track.Racers.Add(new LightVehicle(racer.Speed, racer.Puncture, (int)racer.People, racer.PunctureTime));
 							break;
 						case VehicleType.Moto:
-							Track.Racers.Add(new MotoVehicle(racer.Speed, racer.Puncture, (bool)racer.HasSidecar));
+							Track.Racers.Add(new MotoVehicle(racer.Speed, racer.Puncture, (bool)racer.HasSidecar, racer.PunctureTime));
 							break;
 						case VehicleType.Heavy:
-							Track.Racers.Add(new HeavyVehicle(racer.Speed, racer.Puncture, (int)racer.Weight));
+							Track.Racers.Add(new HeavyVehicle(racer.Speed, racer.Puncture, (int)racer.Weight, racer.PunctureTime));
 							break;
 					}
 				}

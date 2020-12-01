@@ -17,6 +17,14 @@
     <Grid>
         <dxlc:LayoutControl Margin="0" Orientation="Vertical">
             <dxlc:LayoutGroup Orientation="Vertical" VerticalAlignment="Stretch">
+                <dxlc:LayoutGroup>
+                    <dxlc:LayoutItem VerticalAlignment="Top" Label="Длинная круга" >
+                        <TextBlock Text="{Binding Track.LengthString}" FontWeight="Bold" Foreground="Tomato"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem VerticalAlignment="Top" Label="Период обновления" >
+                        <TextBlock Text="{Binding Track.IntervalString}" FontWeight="Bold" Foreground="Tomato"/>
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
                 <dxlc:LayoutItem VerticalAlignment="Stretch" Label="Гонка! Это гонка!" LabelPosition="Top">
                     <dxg:GridControl AutoGenerateColumns="None" 
                                      EnableSmartColumnsGeneration="False"

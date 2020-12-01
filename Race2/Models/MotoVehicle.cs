@@ -16,7 +16,7 @@ namespace Race2.Models
 		/// </summary>
 		public virtual bool HasSidecar { get; set; }
 
-		public MotoVehicle(int speed, double puncture, bool hasSidecar) : base(VehicleType.Moto, speed, puncture)
+		public MotoVehicle(int speed, double puncture, bool hasSidecar, int punctureTime) : base(VehicleType.Moto, speed, puncture, punctureTime)
 		{
 			HasSidecar = hasSidecar;
 		}

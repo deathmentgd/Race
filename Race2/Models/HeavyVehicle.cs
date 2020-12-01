@@ -16,7 +16,7 @@ namespace Race2.Models
 		/// </summary>
 		public virtual double Weight { get; set; }
 
-		public HeavyVehicle(int speed, double puncture, double weight) : base(VehicleType.Heavy, speed, puncture)
+		public HeavyVehicle(int speed, double puncture, double weight, int punctureTime) : base(VehicleType.Heavy, speed, puncture, punctureTime)
 		{
 			Weight = weight;
 		}

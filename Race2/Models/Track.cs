@@ -24,7 +24,22 @@ namespace Race2.Models
 		/// <summary>
 		/// Длинна трассы
 		/// </summary>
-		public virtual double Length { get; set; }
+		public virtual double Length
+		{
+			get { return GetProperty(() => Length); }
+			set { SetProperty(() => Length, value); }
+		}
+		public virtual string LengthString
+		{
+			get { return GetProperty(() => LengthString); }
+			set { SetProperty(() => LengthString, value); }
+		}
+		public virtual int TimerInterval { get; set; }
+		public virtual string IntervalString
+		{
+			get { return GetProperty(() => IntervalString); }
+			set { SetProperty(() => IntervalString, value); }
+		}
 		/// <summary>
 		/// Участники
 		/// </summary>
@@ -54,10 +69,13 @@ namespace Race2.Models
 		/// Конструктор
 		/// </summary>
 		/// <param name="length">длина трассы в км</param>
-		public Track(double length)
+		public Track(double length, int timerInterval)
 		{
 			Length = length;
+			TimerInterval = timerInterval;
 			IsAllFinished = true;
+			LengthString = $"{Length} км";
+			IntervalString = $"{TimerInterval} мс";
 		}
 
 		/// <summary>
@@ -69,7 +87,7 @@ namespace Race2.Models
 			FinishedRacers.Clear();
 			Racers.ForEach(veh =>
 			{
-				veh.Run(Length);
+				veh.Run(Length, TimerInterval);
 			});
 			CheckForFinish();
 		}
