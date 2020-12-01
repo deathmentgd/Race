@@ -1,0 +1,17 @@
+﻿<dx:DXWindow
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:Views="clr-namespace:Race2.Views"
+    xmlns:local="clr-namespace:Race2" 
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm" x:Class="Race2.MainWindow"
+             Title="MainWindow"
+    WindowStartupLocation="CenterScreen">
+    <dxmvvm:Interaction.Behaviors>
+        <dx:DXSplashScreenService ShowSplashScreenOnLoading="True" SplashScreenType="{x:Type local:SplashScreenView}"/>
+    </dxmvvm:Interaction.Behaviors>
+    <Grid>
+        <Views:MainView/>
+    </Grid>
+</dx:DXWindow>

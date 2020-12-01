@@ -1,0 +1,176 @@
+﻿using DevExpress.Mvvm;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+
+namespace Race2.Models
+{
+	public enum VehicleType
+	{
+		Light = 1,
+		Moto = 2,
+		Heavy = 3
+	}
+
+	/// <summary>
+	/// ТС
+	/// </summary>
+	public abstract class Vehicle : BindableBase
+	{
+		public virtual int Place { get; set; }
+
+		public virtual VehicleType VehicleType { get; }
+		/// <summary>
+		/// Скорость ТС
+		/// </summary>
+		public virtual int Speed { get; set; }
+		/// <summary>
+		/// Пройденное расстояние
+		/// </summary>
+		public virtual double DistancePass
+		{
+			get { return GetProperty(() => DistancePass); }
+			set { SetProperty(() => DistancePass, value); }
+		}
+
+		public virtual string ElapsedTime
+		{
+			get { return GetProperty(() => ElapsedTime); }
+			set { SetProperty(() => ElapsedTime, value); }
+		}
+
+		/// <summary>
+		/// Вероятность прокола
+		/// </summary>
+		public virtual double Puncture { get; set; }
+
+		public virtual bool IsPuncture
+		{
+			get { return GetProperty(() => IsPuncture); }
+			set { SetProperty(() => IsPuncture, value); }
+		}
+
+		public virtual bool IsFinished
+		{
+			get { return GetProperty(() => IsFinished); }
+			set { SetProperty(() => IsFinished, value); }
+		}
+
+		public virtual double RndValue
+		{
+			get { return GetProperty(() => RndValue); }
+			set { SetProperty(() => RndValue, value); }
+		}
+
+		private long _punctureTimeSeconds { get; set; } = 3;
+
+		Stopwatch _stopWatch;
+		System.Threading.Timer _timer;
+		int _timerInterval = 100;
+
+		private static readonly Random random = new Random();
+		private static readonly object syncLock = new object();
+
+		/// <summary>
+		/// Мои параметры
+		/// </summary>
+		public string MyParameters => ShowMyParameters();
+
+		/// <summary>
+		/// Сформировать строку описания параметров
+		/// </summary>
+		/// <returns></returns>
+		public abstract string ShowMyParameters();
+
+		/// <summary>
+		/// Создать ТС
+		/// </summary>
+		/// <param name="speed">скорость</param>
+		/// <param name="puncture">шанс прокола</param>
+		public Vehicle(VehicleType vehicleType, int speed, double puncture)
+		{
+			IsFinished = true;
+			Speed = speed;
+			Puncture = puncture;
+			VehicleType = vehicleType;
+			IsPuncture = false;
+		}
+
+		public void Run(double lengthTrack)
+		{
+			
+				IsFinished = false;
+				DistancePass = 0;
+				ElapsedTime = "00:00:00.000";
+				_stopWatch = new Stopwatch();
+				_stopWatch.Start();
+				_timer = new System.Threading.Timer(new TimerCallback(GoGoGo), lengthTrack, 0, _timerInterval);
+			
+		}
+
+		private void GoGoGo(object obj)
+		{
+			var lengthTrack = obj as double?;
+
+			if (!IsPuncture)
+			{
+				CheckForPuncture();
+				if (IsPuncture)
+				{
+					StopForPuncture();
+				}
+			}
+			if (!IsPuncture)
+			{
+				DistancePass += Math.Truncate(((Speed / (double)3600) * (_timerInterval / (double)1000))  * 1000000) / 1000000;
+			}
+
+			if (DistancePass >= lengthTrack)
+			{
+				_stopWatch.Stop();
+				_timer.Dispose();
+				IsFinished = true;
+			}
+			TimeSpan ts = _stopWatch.Elapsed;
+			ElapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+		}
+
+		/// <summary>
+		/// Проверяем не проколол ли
+		/// </summary>
+		private void CheckForPuncture()
+		{
+			lock (syncLock)
+			{
+				RndValue = random.NextDouble();
+			}
+			IsPuncture = RndValue >= 0 && RndValue <= Puncture;
+		}
+
+		/// <summary>
+		/// Запускаем таймер после прокола, для возобновления движения
+		/// </summary>
+		private void StopForPuncture()
+		{
+			var timer = new System.Timers.Timer(_punctureTimeSeconds * 1000);
+			timer.Elapsed += OnTimedEvent;
+			timer.AutoReset = false;
+			timer.Enabled = true;
+		}
+
+		/// <summary>
+		/// По истечении таймера - стартуем дальше
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="e"></param>
+		private void OnTimedEvent(Object source, ElapsedEventArgs e)
+		{
+			IsPuncture = false;
+		}
+	}
+}

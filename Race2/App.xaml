@@ -1,0 +1,31 @@
+﻿<Application x:Class="Race2.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             StartupUri="MainWindow.xaml" Startup="OnAppStartup_UpdateThemeName">
+    <Application.Resources>
+        <Style TargetType="dxg:GridColumnHeader">
+            <Setter Property="Foreground" Value="DodgerBlue"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style TargetType="dxg:GridColumn">
+            <Setter Property="HorizontalHeaderContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="dxg:TableView">
+            <Setter Property="UseEvenRowBackground" Value="True"/>
+            <Setter Property="AllowScrollAnimation" Value="True"/>
+            <Setter Property="AllowPerPixelScrolling" Value="True"/>
+            <Setter Property="ShowDataNavigator" Value="True"/>
+            <Setter Property="DataNavigatorButtons" Value="Navigation"/>
+            <Setter Property="AllowCascadeUpdate" Value="True"/>
+            <Setter Property="ShowGroupPanel" Value="False"/>
+            <Setter Property="ShowTotalSummary" Value="False"/>
+            <Setter Property="ScrollAnimationMode" Value="EaseOut"/>
+            <Setter Property="EnableImmediatePosting" Value="True"/>
+        </Style>
+        <Style TargetType="dx:SimpleButton">
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+    </Application.Resources>
+</Application>
