@@ -16,6 +16,9 @@ namespace Race2.Models
 	public class Track : BindableBase
 	{
 		public delegate void FinishHandler();
+		/// <summary>
+		/// Ивент о завершении гонки
+		/// </summary>
 		public event FinishHandler OnFinishHandler;
 
 		/// <summary>
@@ -26,22 +29,40 @@ namespace Race2.Models
 		/// Участники
 		/// </summary>
 		public virtual ObservableCollection<Vehicle> Racers { get; set; } = new ObservableCollection<Vehicle>();
+		/// <summary>
+		/// Итоговые результаты
+		/// </summary>
 		public virtual ObservableCollection<Vehicle> FinishedRacers { get; set; } = new ObservableCollection<Vehicle>();
 
+		/// <summary>
+		/// Флаг что все доехали
+		/// </summary>
 		public virtual bool IsAllFinished
 		{
 			get { return GetProperty(() => IsAllFinished); }
 			set { SetProperty(() => IsAllFinished, value); }
 		}
 
+		/// <summary>
+		/// Внутренний таймер для проверки окончания
+		/// </summary>
 		System.Threading.Timer _timer;
 
+		//------------------------------------------------------------------------
+
+		/// <summary>
+		/// Конструктор
+		/// </summary>
+		/// <param name="length">длина трассы в км</param>
 		public Track(double length)
 		{
 			Length = length;
 			IsAllFinished = true;
 		}
 
+		/// <summary>
+		/// Начать гонку
+		/// </summary>
 		public void StartRace()
 		{
 			IsAllFinished = false;
@@ -53,11 +74,18 @@ namespace Race2.Models
 			CheckForFinish();
 		}
 
+		/// <summary>
+		/// Запустить таймер на проверку окончания
+		/// </summary>
 		private void CheckForFinish()
 		{							
 			_timer = new System.Threading.Timer(new TimerCallback(CheckDo), 0, 0, 1000);			
 		}
 
+		/// <summary>
+		/// Сама проверка окончания
+		/// </summary>
+		/// <param name="obj"></param>
 		private void CheckDo(object obj)
 		{
 			if (Racers.Count(x=>x.IsFinished) == Racers.Count)
@@ -65,6 +93,7 @@ namespace Race2.Models
 				_timer.Dispose();
 				IsAllFinished = true;
 				OnFinishHandler?.Invoke();
+				//Отсортируем по времени и выведем таблицу
 				var list = Racers.OrderBy(x => x.ElapsedTime).ToList();
 				for (var i = 0; i<list.Count;i++)
 				{

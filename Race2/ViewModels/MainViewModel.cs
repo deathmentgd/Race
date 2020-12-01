@@ -5,6 +5,7 @@ using DevExpress.Mvvm.POCO;
 using Race2.Properties;
 using System.Windows.Threading;
 using Race2.Models;
+using System.Configuration;
 
 namespace Race2.ViewModels
 {
@@ -37,12 +38,28 @@ namespace Race2.ViewModels
 		{
 			//Инициализация
 			Track = new Track(1);
-			Track.Racers.Add(new LightVehicle(90, 0.0023, 2));
-			Track.Racers.Add(new LightVehicle(80, 0.0007, 0));
-			Track.Racers.Add(new MotoVehicle(110, 0.0040, true));
-			Track.Racers.Add(new MotoVehicle(100, 0.0011, false));
-			Track.Racers.Add(new HeavyVehicle(160, 0.004, 2000));
-			Track.Racers.Add(new HeavyVehicle(150, 0.003, 2300));
+
+			VehiclesConfigSection section = (VehiclesConfigSection)ConfigurationManager.GetSection("Vehicles");
+
+			if (section != null)
+			{
+				foreach (RacerElement racer in section.RacersItems)
+				{
+					switch (racer.VehicleType)
+					{
+						case VehicleType.Light:
+							Track.Racers.Add(new LightVehicle(racer.Speed, racer.Puncture, (int)racer.People));
+							break;
+						case VehicleType.Moto:
+							Track.Racers.Add(new MotoVehicle(racer.Speed, racer.Puncture, (bool)racer.HasSidecar));
+							break;
+						case VehicleType.Heavy:
+							Track.Racers.Add(new HeavyVehicle(racer.Speed, racer.Puncture, (int)racer.Weight));
+							break;
+					}
+				}
+			}
+
 			//Подпишемся на окончание гонки
 			Track.OnFinishHandler += OnFinish;
 		}		
@@ -67,16 +84,6 @@ namespace Race2.ViewModels
 									 {
 										 RunRace();
 									 }
-								 })
-							  );
-		}
-
-		public void ShowMessageError(string msg, string title)
-		{
-			System.Windows.Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
-								 new System.Action(delegate ()
-								 {
-									 MBS.ShowMessage(msg, title, MessageButton.OK, MessageIcon.Error);
 								 })
 							  );
 		}

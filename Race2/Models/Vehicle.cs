@@ -22,8 +22,13 @@ namespace Race2.Models
 	/// </summary>
 	public abstract class Vehicle : BindableBase
 	{
+		/// <summary>
+		/// Место на финише		
+		/// </summary>
 		public virtual int Place { get; set; }
-
+		/// <summary>
+		/// Тип ТС
+		/// </summary>
 		public virtual VehicleType VehicleType { get; }
 		/// <summary>
 		/// Скорость ТС
@@ -37,7 +42,9 @@ namespace Race2.Models
 			get { return GetProperty(() => DistancePass); }
 			set { SetProperty(() => DistancePass, value); }
 		}
-
+		/// <summary>
+		/// Затраченное время
+		/// </summary>
 		public virtual string ElapsedTime
 		{
 			get { return GetProperty(() => ElapsedTime); }
@@ -48,31 +55,52 @@ namespace Race2.Models
 		/// Вероятность прокола
 		/// </summary>
 		public virtual double Puncture { get; set; }
-
+		/// <summary>
+		/// Флаг что прокол активен
+		/// </summary>
 		public virtual bool IsPuncture
 		{
 			get { return GetProperty(() => IsPuncture); }
 			set { SetProperty(() => IsPuncture, value); }
 		}
-
+		/// <summary>
+		/// Флаг что доехал до финиша
+		/// </summary>
 		public virtual bool IsFinished
 		{
 			get { return GetProperty(() => IsFinished); }
 			set { SetProperty(() => IsFinished, value); }
 		}
-
+		/// <summary>
+		/// Текущая вероятность (для контроля)
+		/// </summary>
 		public virtual double RndValue
 		{
 			get { return GetProperty(() => RndValue); }
 			set { SetProperty(() => RndValue, value); }
 		}
 
+		/// <summary>
+		/// Время починки прокола
+		/// </summary>
 		private long _punctureTimeSeconds { get; set; } = 3;
 
+		/// <summary>
+		/// Секундомер
+		/// </summary>
 		Stopwatch _stopWatch;
+		/// <summary>
+		/// Таймер для отсчета починки прокола
+		/// </summary>
 		System.Threading.Timer _timer;
+		/// <summary>
+		/// Интервал отслеживания расстояния в мс
+		/// </summary>
 		int _timerInterval = 100;
 
+		/// <summary>
+		/// Рандомайзер для уникализации шанса прокола
+		/// </summary>
 		private static readonly Random random = new Random();
 		private static readonly object syncLock = new object();
 
@@ -86,6 +114,8 @@ namespace Race2.Models
 		/// </summary>
 		/// <returns></returns>
 		public abstract string ShowMyParameters();
+
+		//------------------------------------------------------------------------------------------------------
 
 		/// <summary>
 		/// Создать ТС
@@ -101,22 +131,31 @@ namespace Race2.Models
 			IsPuncture = false;
 		}
 
+		//------------------------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// Стартовать
+		/// </summary>
+		/// <param name="lengthTrack"></param>
 		public void Run(double lengthTrack)
 		{
-			
-				IsFinished = false;
-				DistancePass = 0;
-				ElapsedTime = "00:00:00.000";
-				_stopWatch = new Stopwatch();
-				_stopWatch.Start();
-				_timer = new System.Threading.Timer(new TimerCallback(GoGoGo), lengthTrack, 0, _timerInterval);
-			
+			IsFinished = false;
+			DistancePass = 0;
+			ElapsedTime = "00:00:00.000";
+			_stopWatch = new Stopwatch();
+			_stopWatch.Start();
+			_timer = new System.Threading.Timer(new TimerCallback(GoGoGo), lengthTrack, 0, _timerInterval);
 		}
 
+		/// <summary>
+		/// На каждый инкремент отслеживания чекаем прокол и считаем расстояние и время
+		/// </summary>
+		/// <param name="obj"></param>
 		private void GoGoGo(object obj)
 		{
 			var lengthTrack = obj as double?;
 
+			//Если не прокол - проверим шансы
 			if (!IsPuncture)
 			{
 				CheckForPuncture();
@@ -125,18 +164,22 @@ namespace Race2.Models
 					StopForPuncture();
 				}
 			}
+
+			//Если все еще не прокол - то посчитаем расстояние
 			if (!IsPuncture)
 			{
 				DistancePass += Math.Truncate(((Speed / (double)3600) * (_timerInterval / (double)1000))  * 1000000) / 1000000;
 			}
 
+			//Останавливаем все, когда доехалии
 			if (DistancePass >= lengthTrack)
 			{
 				_stopWatch.Stop();
 				_timer.Dispose();
 				IsFinished = true;
 			}
-			TimeSpan ts = _stopWatch.Elapsed;
+			//Отмечаем прошедшее время
+			TimeSpan ts = _stopWatch.Elapsed;			
 			ElapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
 		}
 

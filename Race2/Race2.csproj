@@ -49,6 +49,7 @@
     <Reference Include="DevExpress.Xpf.LayoutControl.v16.2, Version=16.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Themes.MetropolisLight.v16.2, Version=16.2.15.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -74,6 +75,7 @@
     <Compile Include="DXSplashScreen\SplashScreenView.xaml.cs">
       <DependentUpon>SplashScreenView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\VehiclesConfigSection.cs" />
     <Compile Include="Models\HeavyVehicle.cs" />
     <Compile Include="Models\LightVehicle.cs" />
     <Compile Include="Models\MotoVehicle.cs" />
